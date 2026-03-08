@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feliz Dia das Mulheres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0d080;
+      --rose: #d4829a;
+      --rose-soft: #f2c4d0;
+      --white: #f5f5f5;
+      --muted: #777;
+      --bg: #080810;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(180, 80, 120, 0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(100, 60, 160, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 20% 60%, rgba(201, 168, 76, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ---------- Canvas ---------- */
+    #stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ---------- Layout ---------- */
+    #scene {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: clamp(2rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem);
+      text-align: center;
+    }
+
+    /* ---------- Blocks ---------- */
+    .block {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+      margin-bottom: clamp(1.2rem, 3vw, 2rem);
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .block.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- Text styles ---------- */
+    .terminal {
+      font-family: 'Inter', monospace;
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .label {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.65rem, 1.8vw, 0.8rem);
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 10vw, 6rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+      text-shadow: none;
+      filter: drop-shadow(0 0 18px rgba(201, 168, 76, 0.35));
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .classification {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+
+    .prose {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      line-height: 1.75;
+      color: #c8c8c8;
+      font-style: italic;
+    }
+
+    .prose strong {
+      color: var(--white);
+      font-style: normal;
+    }
+
+    .highlight {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+      line-height: 1.7;
+      color: var(--white);
+    }
+
+    .prose-strong {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.15rem, 3.8vw, 1.6rem);
+      line-height: 1.65;
+      color: var(--white);
+      font-weight: 700;
+      font-style: normal;
+      letter-spacing: 0.01em;
+    }
+
+    .prose-soft {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(0.95rem, 2.8vw, 1.2rem);
+      line-height: 1.8;
+      color: #909090;
+      font-style: italic;
+    }
+
+    .signature {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      color: #555;
+      letter-spacing: 0.08em;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .final {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4.5vw, 2rem);
+      font-weight: 400;
+      color: var(--gold-light);
+      letter-spacing: 0.02em;
+    }
+
+    /* ---------- Divider ---------- */
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0.4rem auto;
+      opacity: 0.5;
+    }
+
+    /* ---------- Cursor ---------- */
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--muted);
+      vertical-align: middle;
+      margin-left: 3px;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* ---------- Heart ---------- */
+    #heart {
+      opacity: 0;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      margin-top: 0.5rem;
+      transition: opacity 1.8s ease;
+      color: #c0546a;
+      filter: drop-shadow(0 0 8px rgba(192, 84, 106, 0.5));
+    }
+
+    #heart.visible {
+      opacity: 1;
+    }
+
+    .prose-gold {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      line-height: 1.8;
+      color: var(--gold-light);
+      font-style: italic;
+    }
+
+    /* ---------- Responsive tweaks ---------- */
+    @media (max-width: 480px) {
+      #scene {
+        justify-content: flex-start;
+        padding-top: 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<main id="scene">
+  <!-- All blocks injected by JS -->
+</main>
+
+
+<script>
+/* ============================================================
+   ROMANTIC PARTICLES
+   ============================================================ */
+(function () {
+  const canvas = document.getElementById('stars');
+  const ctx    = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  // palette: white stars + soft rose + faint gold
+  const palette = [
+    { r: 255, g: 255, b: 255 },
+    { r: 230, g: 180, b: 200 },
+    { r: 212, g: 175, b: 100 },
+    { r: 200, g: 160, b: 210 },
+  ];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randColor() {
+    return palette[Math.floor(Math.random() * palette.length)];
+  }
+
+  function initParticles(n) {
+    particles = [];
+    for (let i = 0; i < n; i++) {
+      const c = randColor();
+      particles.push({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        r:  Math.random() * 1.4 + 0.2,
+        a:  Math.random(),
+        da: (Math.random() * 0.004 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
+        vx: (Math.random() - 0.5) * 0.05,
+        vy: (Math.random() - 0.5) * 0.05,
+        cr: c.r, cg: c.g, cb: c.b,
+        glow: Math.random() > 0.82,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of particles) {
+      s.a += s.da;
+      if (s.a <= 0 || s.a >= 1) s.da *= -1;
+      s.x += s.vx;
+      s.y += s.vy;
+      if (s.x < 0) s.x = W;
+      if (s.x > W) s.x = 0;
+      if (s.y < 0) s.y = H;
+      if (s.y > H) s.y = 0;
+
+      const alpha = s.a * 0.8;
+      if (s.glow) {
+        // soft radial glow for special particles
+        const grad = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r * 5);
+        grad.addColorStop(0, `rgba(${s.cr},${s.cg},${s.cb},${alpha})`);
+        grad.addColorStop(1, `rgba(${s.cr},${s.cg},${s.cb},0)`);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r * 5, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${s.cr},${s.cg},${s.cb},${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); initParticles(220); });
+  resize();
+  initParticles(220);
+  draw();
+})();
+
+
+
+
+/* ============================================================
+   SEQUENCE DEFINITION
+   ============================================================ */
+const NAME = 'Aline';
+
+const sequence = [
+  {
+    type: 'terminal',
+    lines: ['Inicializando sistema...'],
+    pauseAfter: 1200,
+  },
+  {
+    type: 'terminal',
+    lines: ['Buscando entre 8 bilhões de pessoas...'],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'terminal',
+    lines: ['Analisando padrões raros...', 'Analisando...'],
+    pauseAfter: 1400,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 800,
+  },
+  {
+    type: 'result',
+    lines: ['Resultado encontrado.'],
+    pauseAfter: 1000,
+  },
+  {
+    type: 'name-block',
+    pauseAfter: 1800,
+  },
+  {
+    type: 'classification',
+    lines: ['Extremamente rara.'],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 800,
+  },
+  {
+    type: 'observation-label',
+    pauseAfter: 700,
+  },
+  {
+    type: 'prose',
+    lines: [
+      'Ela escuta de verdade.',
+      'Incentiva quando alguém pensa em desistir.',
+      'Enxerga potencial onde muitos só veem dificuldade.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 600,
+  },
+  {
+    type: 'prose',
+    lines: [
+      'Todos os dias alguém sai de perto dela um pouco mais forte,',
+      'um pouco mais confiante,',
+      'um pouco mais acreditando em si mesmo.',
+    ],
+    pauseAfter: 2000,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 600,
+  },
+  {
+    type: 'prose-soft',
+    lines: [
+      'Talvez ela nem perceba isso.',
+      'Mas quem convive, percebe.',
+    ],
+    pauseAfter: 2000,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 800,
+  },
+  {
+    type: 'prose-label',
+    text: 'Existe algo raro na forma como Aline vê a vida.',
+    pauseAfter: 1600,
+  },
+  {
+    type: 'prose',
+    lines: [
+      'Enquanto muita gente corre atrás do que é grande, barulhento ou impressionante,',
+      'ela parece encontrar beleza nas coisas simples.',
+    ],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'prose',
+    lines: [
+      'No esforço silencioso de alguém tentando melhorar.',
+      'Na conversa sincera que acontece sem pressa.',
+      'Nos pequenos progressos que quase ninguém percebe.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 600,
+  },
+  {
+    type: 'prose',
+    lines: [
+      'Ela olha para as pessoas com profundidade.',
+      'Não apenas pelo que mostram por fora,',
+      'mas pelo que carregam por dentro.',
+    ],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'prose-soft',
+    lines: [
+      'Talvez seja por isso que tantas pessoas se sentem bem perto dela.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 600,
+  },
+  {
+    type: 'prose-soft',
+    lines: [
+      'essa pessoa acaba se tornando bonita de um jeito',
+      'que não depende de aparência.',
+    ],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'prose-gold',
+    lines: [
+      'Bonita pela forma como vive.',
+      'Bonita pela forma como vê os outros.',
+      'Bonita pela forma como faz o mundo parecer um pouco mais humano.',
+    ],
+    pauseAfter: 2200,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 600,
+  },
+  {
+    type: 'register',
+    lines: ['Registro permanente criado.'],
+    pauseAfter: 1000,
+  },
+  {
+    type: 'reason',
+    pauseAfter: 1400,
+  },
+  {
+    type: 'exists',
+    pauseAfter: 1800,
+  },
+  {
+    type: 'final',
+    pauseAfter: 800,
+  },
+  {
+    type: 'heart',
+    pauseAfter: 0,
+  },
+];
+
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const scene = document.getElementById('scene');
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function makeBlock(cls) {
+  const div = document.createElement('div');
+  div.className = 'block ' + (cls || '');
+  scene.appendChild(div);
+  return div;
+}
+
+function showBlock(div) {
+  return new Promise(resolve => {
+    requestAnimationFrame(() => {
+      div.classList.add('visible');
+      // resolve after transition
+      setTimeout(resolve, 950);
+    });
+  });
+}
+
+async function typeText(el, text, speed = 38) {
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  el.appendChild(cursor);
+  for (const ch of text) {
+    cursor.insertAdjacentText('beforebegin', ch);
+    await sleep(speed + Math.random() * 20);
+  }
+  await sleep(300);
+  cursor.remove();
+}
+
+async function typeLines(container, lines, speed = 38) {
+  for (let i = 0; i < lines.length; i++) {
+    const p = document.createElement('p');
+    container.appendChild(p);
+    // handle \n inside line
+    const parts = lines[i].split('\n');
+    for (let j = 0; j < parts.length; j++) {
+      if (j > 0) container.appendChild(document.createElement('br'));
+      await typeText(p, parts[j], speed);
+    }
+    if (i < lines.length - 1) await sleep(400);
+  }
+}
+
+
+/* ============================================================
+   RENDER STEPS
+   ============================================================ */
+async function renderStep(step) {
+  switch (step.type) {
+
+    case 'terminal': {
+      const block = makeBlock('');
+      const termPs = step.lines.map(() => {
+        const p = document.createElement('p');
+        p.className = 'terminal';
+        block.appendChild(p);
+        return p;
+      });
+      await showBlock(block);
+      for (let i = 0; i < termPs.length; i++) {
+        await typeText(termPs[i], step.lines[i], 28);
+        if (i < termPs.length - 1) await sleep(300);
+      }
+      break;
+    }
+
+    case 'divider': {
+      const block = makeBlock('');
+      const hr = document.createElement('div');
+      hr.className = 'divider';
+      block.appendChild(hr);
+      await showBlock(block);
+      break;
+    }
+
+    case 'result': {
+      const block = makeBlock('');
+      const p = document.createElement('p');
+      p.className = 'terminal';
+      p.style.color = '#a0a0a0';
+      p.style.letterSpacing = '0.15em';
+      block.appendChild(p);
+      await showBlock(block);
+      await typeText(p, step.lines[0], 30);
+      break;
+    }
+
+    case 'name-block': {
+      const block = makeBlock('');
+      const labelP = document.createElement('p');
+      labelP.className = 'label';
+      labelP.textContent = 'Nome detectado';
+      const nameP = document.createElement('p');
+      nameP.className = 'name';
+      nameP.textContent = NAME;
+      block.appendChild(labelP);
+      block.appendChild(nameP);
+      await showBlock(block);
+      break;
+    }
+
+    case 'classification': {
+      const block = makeBlock('');
+      const labelEl = document.createElement('p');
+      labelEl.className = 'label';
+      labelEl.textContent = 'Classificação';
+      const valEl = document.createElement('p');
+      valEl.className = 'classification';
+      block.appendChild(labelEl);
+      block.appendChild(valEl);
+      await showBlock(block);
+      await typeText(valEl, step.lines[0], 35);
+      break;
+    }
+
+    case 'observation-label': {
+      const block = makeBlock('');
+      const obsLabel = document.createElement('p');
+      obsLabel.className = 'label';
+      obsLabel.textContent = 'O que o sistema observou';
+      block.appendChild(obsLabel);
+      await showBlock(block);
+      break;
+    }
+
+    case 'prose':
+    case 'prose-strong':
+    case 'prose-soft':
+    case 'prose-gold': {
+      const cssClass = step.type;
+      const typingSpeed = cssClass === 'prose-strong' ? 36 : cssClass === 'prose-soft' ? 30 : 32;
+      const block = makeBlock('');
+      block.style.opacity = '0';
+      block.style.transform = 'translateY(12px)';
+      await sleep(100);
+      block.style.transition = 'opacity 0.9s ease, transform 0.9s ease';
+      block.style.opacity = '1';
+      block.style.transform = 'translateY(0)';
+      await sleep(900);
+      for (const line of step.lines) {
+        const p = document.createElement('p');
+        p.className = cssClass;
+        block.appendChild(p);
+        await typeText(p, line, typingSpeed);
+        await sleep(cssClass === 'prose-strong' ? 700 : 600);
+      }
+      break;
+    }
+
+    case 'prose-label': {
+      const block = makeBlock('');
+      const p = document.createElement('p');
+      p.className = 'prose-strong';
+      p.style.fontSize = 'clamp(1.05rem, 3.2vw, 1.45rem)';
+      block.appendChild(p);
+      await showBlock(block);
+      await typeText(p, step.text, 34);
+      break;
+    }
+
+    case 'register': {
+      const block = makeBlock('');
+      const p = document.createElement('p');
+      p.className = 'terminal';
+      p.style.color = '#6a9f6a';
+      block.appendChild(p);
+      await showBlock(block);
+      await typeText(p, step.lines[0], 28);
+      break;
+    }
+
+    case 'reason': {
+      const block = makeBlock('');
+      const reasonLabel = document.createElement('p');
+      reasonLabel.className = 'label';
+      reasonLabel.textContent = 'Motivo do registro';
+      const reasonVal = document.createElement('p');
+      reasonVal.className = 'highlight';
+      reasonVal.textContent = 'Hoje é Dia das Mulheres.';
+      block.appendChild(reasonLabel);
+      block.appendChild(reasonVal);
+      await showBlock(block);
+      break;
+    }
+
+    case 'exists': {
+      const block = makeBlock('');
+      const existsP = document.createElement('p');
+      existsP.className = 'prose';
+      existsP.style.fontStyle = 'normal';
+      existsP.style.color = '#d0d0d0';
+      existsP.style.fontSize = 'clamp(1rem,3vw,1.35rem)';
+      existsP.innerHTML = 'Esta página existe<br>porque você existe.';
+      block.appendChild(existsP);
+      await showBlock(block);
+      break;
+    }
+
+    case 'final': {
+      const block = makeBlock('');
+      const finalP = document.createElement('p');
+      finalP.className = 'final';
+      finalP.textContent = 'Feliz Dia das Mulheres, Aline.';
+      block.appendChild(finalP);
+      await showBlock(block);
+      break;
+    }
+
+    case 'heart': {
+      const block = makeBlock('');
+      const heart = document.createElement('div');
+      heart.id = 'heart';
+      heart.textContent = '♥';
+      block.appendChild(heart);
+      block.classList.add('visible');
+      await sleep(600);
+      heart.classList.add('visible');
+      await sleep(1400);
+      // signature
+      const sigBlock = makeBlock('');
+      const sigP = document.createElement('p');
+      sigP.className = 'signature';
+      sigP.textContent = 'com carinho, um grandão que te acha especial.';
+      sigBlock.appendChild(sigP);
+      await showBlock(sigBlock);
+      break;
+    }
+  }
+}
+
+
+/* ============================================================
+   MAIN RUNNER
+   ============================================================ */
+async function run() {
+  // initial black pause for drama
+  await sleep(800);
+
+  for (const step of sequence) {
+    await renderStep(step);
+    if (step.pauseAfter > 0) await sleep(step.pauseAfter);
+  }
+}
+
+// scroll to bottom as content appears
+const observer = new MutationObserver(() => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+observer.observe(scene, { childList: true, subtree: true });
+
+window.addEventListener('load', run);
+</script>
+</body>
+</html>
