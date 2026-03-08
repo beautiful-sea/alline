@@ -26,10 +26,12 @@
 
     html, body {
       width: 100%;
-      min-height: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
       background: var(--bg);
       color: var(--white);
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     body::before {
@@ -66,9 +68,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: clamp(2rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem);
+      min-height: 100%;
+      width: 100%;
+      padding: clamp(2rem, 10vw, 6rem) clamp(1.5rem, 6vw, 4rem);
       text-align: center;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* ---------- Blocks ---------- */
@@ -236,6 +242,36 @@
       font-style: italic;
     }
 
+    /* ---------- Intro overlay (terminal centered, fades out) ---------- */
+    #intro-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.1rem;
+      background: var(--bg);
+      padding: 2rem;
+      text-align: center;
+      transition: opacity 1.2s ease, visibility 1.2s ease;
+    }
+
+    #intro-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .prose-human {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1rem, 3vw, 1.35rem);
+      line-height: 1.85;
+      color: #d0d0d0;
+      font-style: normal;
+    }
+
     /* ---------- Responsive tweaks ---------- */
     @media (max-width: 480px) {
       #scene {
@@ -248,6 +284,10 @@
 <body>
 
 <canvas id="stars"></canvas>
+
+<div id="intro-overlay">
+  <!-- terminal lines injected here -->
+</div>
 
 <main id="scene">
   <!-- All blocks injected by JS -->
@@ -343,54 +383,37 @@
    ============================================================ */
 const NAME = 'Aline';
 
+const introLines = [
+  'Inicializando sistema...',
+  'Buscando entre 8 bilhões de pessoas...',
+  'Analisando padrões raros...',
+  'Filtrando pessoas que realmente importam...',
+  'Analisando...',
+  'Resultado encontrado.',
+];
+
 const sequence = [
-  {
-    type: 'terminal',
-    lines: ['Inicializando sistema...'],
-    pauseAfter: 1200,
-  },
-  {
-    type: 'terminal',
-    lines: ['Buscando entre 8 bilhões de pessoas...'],
-    pauseAfter: 1600,
-  },
-  {
-    type: 'terminal',
-    lines: ['Analisando padrões raros...', 'Analisando...'],
-    pauseAfter: 1400,
-  },
-  {
-    type: 'divider',
-    pauseAfter: 800,
-  },
-  {
-    type: 'result',
-    lines: ['Resultado encontrado.'],
-    pauseAfter: 1000,
-  },
+  // --- bloco do nome ---
   {
     type: 'name-block',
-    pauseAfter: 1800,
+    pauseAfter: 1600,
   },
   {
     type: 'classification',
     lines: ['Extremamente rara.'],
-    pauseAfter: 1600,
+    pauseAfter: 1800,
   },
   {
     type: 'divider',
-    pauseAfter: 800,
+    pauseAfter: 1000,
   },
+
+  // --- quem ela é ---
   {
-    type: 'observation-label',
-    pauseAfter: 700,
-  },
-  {
-    type: 'prose',
+    type: 'prose-human',
     lines: [
-      'Ela escuta de verdade.',
-      'Incentiva quando alguém pensa em desistir.',
-      'Enxerga potencial onde muitos só veem dificuldade.',
+      'Existe um tipo de pessoa que o mundo precisa mais do que imagina.',
+      'Pois é... Você é essa pessoa pra muita gente.',
     ],
     pauseAfter: 1800,
   },
@@ -401,21 +424,59 @@ const sequence = [
   {
     type: 'prose',
     lines: [
-      'Todos os dias alguém sai de perto dela um pouco mais forte,',
-      'um pouco mais confiante,',
-      'um pouco mais acreditando em si mesmo.',
+      'Você escuta de verdade.',
+      'Não aquela escuta de ficar esperando a sua vez de falar,',
+      'mas a escuta que faz a pessoa do outro lado se sentir vista.',
     ],
-    pauseAfter: 2000,
+    pauseAfter: 1800,
   },
   {
     type: 'divider',
     pauseAfter: 600,
   },
   {
+    type: 'prose',
+    lines: [
+      'Você tem uma forma muito particular de olhar para as pessoas.',
+      'Isso é lindo... Sabe disso, né?',
+    ],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 800,
+  },
+
+  // --- o processo dela ---
+  {
+    type: 'prose-label',
+    text: 'Sobre o que você está vivendo agora.',
+    pauseAfter: 1400,
+  },
+  {
+    type: 'prose-human',
+    lines: [
+      'Eu sei que nem tudo está fácil.',
+      'Que tem dias que o processo parece longo demais,',
+      'e o resultado parece longe demais.',
+    ],
+    pauseAfter: 1600,
+  },
+  {
+    type: 'prose-human',
+    lines: [
+      'Mas eu preciso te falar uma coisa:',
+      'tudo que você está vivendo, cada decisão, cada despertar,',
+      'cada dia que você escolheu continuar...',
+      'está te tornando uma pessoa mais bonita do que você já era.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
     type: 'prose-soft',
     lines: [
-      'Talvez ela nem perceba isso.',
-      'Mas quem convive, percebe.',
+      'E olha, você já era bastante bonita.',
+      '(Só pra deixar registrado kk)',
     ],
     pauseAfter: 2000,
   },
@@ -423,16 +484,40 @@ const sequence = [
     type: 'divider',
     pauseAfter: 800,
   },
+
+  // --- acreditar nela ---
+  {
+    type: 'prose-strong',
+    lines: [
+      'Eu acredito em você.',
+    ],
+    pauseAfter: 1400,
+  },
+  {
+    type: 'prose-human',
+    lines: [
+      'Da mesma forma que você acredita nas pessoas ao seu redor,',
+      'tem alguém aqui acreditando em você.',
+      'Sem dúvida. Sem medo.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'divider',
+    pauseAfter: 800,
+  },
+
+  // --- como ela vê a vida ---
   {
     type: 'prose-label',
-    text: 'Existe algo raro na forma como Aline vê a vida.',
-    pauseAfter: 1600,
+    text: 'Existe algo raro na forma como você vê a vida.',
+    pauseAfter: 1400,
   },
   {
     type: 'prose',
     lines: [
-      'Enquanto muita gente corre atrás do que é grande, barulhento ou impressionante,',
-      'ela parece encontrar beleza nas coisas simples.',
+      'Enquanto muita gente corre atrás do que é grande e barulhento,',
+      'você encontra beleza nas coisas simples.',
     ],
     pauseAfter: 1600,
   },
@@ -441,7 +526,16 @@ const sequence = [
     lines: [
       'No esforço silencioso de alguém tentando melhorar.',
       'Na conversa sincera que acontece sem pressa.',
-      'Nos pequenos progressos que quase ninguém percebe.',
+      'Nos pequenos detalhes que quase ninguém percebe.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'prose-soft',
+    lines: [
+      '(Sim, isso inclui conversar sobre Deus, filosofia,',
+      'treino, chicaras, coisas da vida e outros assuntos altamente intelectuais,',
+      'mesmo que nem sempre faça muito sentido para pessoas normais kk)',
     ],
     pauseAfter: 1800,
   },
@@ -452,8 +546,8 @@ const sequence = [
   {
     type: 'prose',
     lines: [
-      'Ela olha para as pessoas com profundidade.',
-      'Não apenas pelo que mostram por fora,',
+      'Você olha pra as pessoas com profundidade.',
+      'Não pelo que mostram por fora,',
       'mas pelo que carregam por dentro.',
     ],
     pauseAfter: 1600,
@@ -461,7 +555,7 @@ const sequence = [
   {
     type: 'prose-soft',
     lines: [
-      'Talvez seja por isso que tantas pessoas se sentem bem perto dela.',
+      'Talvez seja por isso que as pessoas se sentem tão bem perto de você.',
     ],
     pauseAfter: 1800,
   },
@@ -472,8 +566,8 @@ const sequence = [
   {
     type: 'prose-soft',
     lines: [
-      'essa pessoa acaba se tornando bonita de um jeito',
-      'que não depende de aparência.',
+      'E sabe o que acontece com pessoas assim?',
+      'Elas vão se tornando bonitas de um jeito que não depende de aparência.',
     ],
     pauseAfter: 1600,
   },
@@ -488,20 +582,45 @@ const sequence = [
   },
   {
     type: 'divider',
+    pauseAfter: 800,
+  },
+
+  // --- desejo de felicidade ---
+  {
+    type: 'prose-human',
+    lines: [
+      'Eu desejo muito que você seja feliz.',
+      'De verdade. Do jeito que você merece.',
+      'Do jeito que faz sentido pra você.',
+    ],
+    pauseAfter: 1800,
+  },
+  {
+    type: 'prose-soft',
+    lines: [
+      '(E que seja bom porque é bom, e não algo do tipo "ruim mas é bom" rs.',
+      'Porque as melhores coisas são assim.)',
+    ],
+    pauseAfter: 2000,
+  },
+  {
+    type: 'divider',
     pauseAfter: 600,
   },
+
+  // --- final ---
   {
     type: 'register',
     lines: ['Registro permanente criado.'],
-    pauseAfter: 1000,
+    pauseAfter: 800,
   },
   {
     type: 'reason',
-    pauseAfter: 1400,
+    pauseAfter: 1200,
   },
   {
     type: 'exists',
-    pauseAfter: 1800,
+    pauseAfter: 1600,
   },
   {
     type: 'final',
@@ -651,7 +770,8 @@ async function renderStep(step) {
     case 'prose':
     case 'prose-strong':
     case 'prose-soft':
-    case 'prose-gold': {
+    case 'prose-gold':
+    case 'prose-human': {
       const cssClass = step.type;
       const typingSpeed = cssClass === 'prose-strong' ? 36 : cssClass === 'prose-soft' ? 30 : 32;
       const block = makeBlock('');
@@ -755,11 +875,35 @@ async function renderStep(step) {
 
 
 /* ============================================================
+   INTRO OVERLAY
+   ============================================================ */
+const overlay = document.getElementById('intro-overlay');
+
+async function runIntro() {
+  await sleep(600);
+  for (const line of introLines) {
+    const p = document.createElement('p');
+    p.className = 'terminal';
+    p.style.opacity = '0';
+    p.style.transition = 'opacity 0.5s ease';
+    overlay.appendChild(p);
+    await sleep(60);
+    p.style.opacity = '1';
+    await typeText(p, line, 26);
+    await sleep(520);
+  }
+  await sleep(700);
+  overlay.classList.add('fade-out');
+  await sleep(1300);
+  overlay.style.display = 'none';
+}
+
+/* ============================================================
    MAIN RUNNER
    ============================================================ */
 async function run() {
-  // initial black pause for drama
-  await sleep(800);
+  await runIntro();
+  await sleep(400);
 
   for (const step of sequence) {
     await renderStep(step);
@@ -769,7 +913,7 @@ async function run() {
 
 // scroll to bottom as content appears
 const observer = new MutationObserver(() => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  scene.scrollTo({ top: scene.scrollHeight, behavior: 'smooth' });
 });
 observer.observe(scene, { childList: true, subtree: true });
 
