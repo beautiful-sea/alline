@@ -31,7 +31,12 @@
       padding: 0;
       background: var(--bg);
       color: var(--white);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: hidden; /* Lock initially */
+    }
+
+    body.scroll-ready {
+      overflow-y: auto;
     }
 
     body::before {
@@ -72,7 +77,6 @@
       width: 100%;
       padding: clamp(2rem, 10vw, 6rem) clamp(1.5rem, 6vw, 4rem);
       text-align: center;
-      overflow-y: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
     }
@@ -894,6 +898,7 @@ async function runIntro() {
   }
   await sleep(700);
   overlay.classList.add('fade-out');
+  document.body.classList.add('scroll-ready'); // Unlock scroll
   await sleep(1300);
   overlay.style.display = 'none';
 }
@@ -913,7 +918,7 @@ async function run() {
 
 // scroll to bottom as content appears
 const observer = new MutationObserver(() => {
-  scene.scrollTo({ top: scene.scrollHeight, behavior: 'smooth' });
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 });
 observer.observe(scene, { childList: true, subtree: true });
 
