@@ -76,10 +76,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start; /* Start from top to prevent cutting */
+      justify-content: flex-start;
       min-height: 100vh;
       width: 100%;
-      padding: clamp(6rem, 20vh, 10rem) clamp(1.5rem, 6vw, 4rem);
+      padding: clamp(6rem, 20vh, 10rem) clamp(1.5rem, 6vw, 4rem) clamp(4rem, 10vh, 6rem);
       text-align: center;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
@@ -986,7 +986,11 @@ async function run() {
 
 // scroll to bottom as content appears
 const observer = new MutationObserver(() => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  // Only scroll if user is at the bottom (within 100px)
+  const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 100;
+  if (isAtBottom) {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
 });
 observer.observe(scene, { childList: true, subtree: true });
 
